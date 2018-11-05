@@ -5,3 +5,7 @@ variable "region" {
 variable "vpc_cidr" {
   default = "10.134.0.0/16"
 }
+
+variable "route53_parent_zone" {
+  type = "string"
+}

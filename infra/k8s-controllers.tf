@@ -17,11 +17,7 @@ resource "aws_security_group" "controllers" {
   }
 }
 
-data "http" "ip" {
-  url = "http://ipecho.net/plain"
-}
-
-resource "aws_security_group_rule" "ssh" {
+resource "aws_security_group_rule" "ssh_controllers" {
   type              = "ingress"
   from_port         = 22
   to_port           = 22
@@ -30,12 +26,48 @@ resource "aws_security_group_rule" "ssh" {
   security_group_id = "${aws_security_group.controllers.id}"
 }
 
+resource "aws_security_group_rule" "api" {
+  type              = "ingress"
+  from_port         = 6443
+  to_port           = 6443
+  protocol          = "tcp"
+  cidr_blocks       = ["${data.http.ip.body}/32"]
+  security_group_id = "${aws_security_group.controllers.id}"
+}
+
+resource "aws_security_group_rule" "health_check" {
+  type              = "ingress"
+  from_port         = 6443
+  to_port           = 6443
+  protocol          = "tcp"
+  cidr_blocks       = ["${var.vpc_cidr}"]
+  security_group_id = "${aws_security_group.controllers.id}"
+}
+
+resource "aws_security_group_rule" "workers_to_api_via_lb" {
+  type              = "ingress"
+  from_port         = 6443
+  to_port           = 6443
+  protocol          = "tcp"
+  cidr_blocks       = ["${element(module.vpc.nat_public_ips, 0)}/32"]
+  security_group_id = "${aws_security_group.controllers.id}"
+}
+
+resource "aws_security_group_rule" "controllers_egress" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = "${aws_security_group.controllers.id}"
+}
+
 resource "aws_instance" "controller_1" {
   ami                    = "${var.controller_image}"
   instance_type          = "${var.controller_instance_type}"
   key_name               = "artem.kajalainen"
   subnet_id              = "${element(module.vpc.public_subnets, 0)}"
-  vpc_security_group_ids = ["${aws_security_group.controllers.id}"]
+  vpc_security_group_ids = ["${aws_security_group.controllers.id}", "${aws_security_group.common.id}"]
 
   root_block_device {
     volume_type = "gp2"
@@ -58,7 +90,7 @@ resource "aws_instance" "controller_2" {
   instance_type          = "${var.controller_instance_type}"
   key_name               = "artem.kajalainen"
   subnet_id              = "${element(module.vpc.public_subnets, 1)}"
-  vpc_security_group_ids = ["${aws_security_group.controllers.id}"]
+  vpc_security_group_ids = ["${aws_security_group.controllers.id}", "${aws_security_group.common.id}"]
 
   root_block_device {
     volume_type = "gp2"
@@ -81,7 +113,7 @@ resource "aws_instance" "controller_3" {
   instance_type          = "${var.controller_instance_type}"
   key_name               = "artem.kajalainen"
   subnet_id              = "${element(module.vpc.public_subnets, 2)}"
-  vpc_security_group_ids = ["${aws_security_group.controllers.id}"]
+  vpc_security_group_ids = ["${aws_security_group.controllers.id}", "${aws_security_group.common.id}"]
 
   root_block_device {
     volume_type = "gp2"
