@@ -1,0 +1,16 @@
+{
+  "CN": "system:node:worker-3",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "FI",
+      "L": "Tampere",
+      "O": "system:nodes",
+      "OU": "Kubernetes The Hard Way",
+      "ST": "Pыrkanmaa"
+    }
+  ]
+}
