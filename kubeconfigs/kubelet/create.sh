@@ -2,7 +2,7 @@
 
 API_PUBLIC_NAME=$(grep api_public_dns_name ../../infra/data.txt | awk -F ' = ' '{print $2}')
 
-for instance in worker-1 worker-2 worker-3; do
+for instance in worker-1 worker-2 worker-3 ctrl-1 ctrl-2 ctrl-3; do
   kubectl config set-cluster kubernetes-the-hard-way \
     --certificate-authority=../../tls/ca/ca.pem \
     --embed-certs=true \

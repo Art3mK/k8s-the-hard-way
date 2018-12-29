@@ -5,7 +5,7 @@ KUBERNETES_PUBLIC_ADDRESS=$(grep api_public_dns_name ../../infra/data.txt | awk 
 kubectl config set-cluster kubernetes-the-hard-way \
   --certificate-authority=../../tls/ca/ca.pem \
   --embed-certs=true \
-  --server=https://127.0.0.1:6443 \
+  --server=https://${KUBERNETES_PUBLIC_ADDRESS} \
   --kubeconfig=admin.kubeconfig
 
 kubectl config set-credentials admin \

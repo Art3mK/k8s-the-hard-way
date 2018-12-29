@@ -1,4 +1,4 @@
-for instance in worker-1 worker-2 worker-3; do
+for instance in ctrl-1 ctrl-2 ctrl-3; do
 cat > ${instance}-csr.json <<EOF
 {
   "CN": "system:node:${instance}",
@@ -18,7 +18,7 @@ cat > ${instance}-csr.json <<EOF
 }
 EOF
 
-EXTERNAL_IP=$(cd ../../infra; terraform output nat_gw_ip)
+EXTERNAL_IP=$(grep ${instance}_public_ip ../../infra/data.txt | awk -F ' = ' '{print $2}')
 INTERNAL_IP=$(grep ${instance}_private_ip ../../infra/data.txt | awk -F ' = ' '{print $2}')
 
 cfssl gencert \

@@ -17,5 +17,15 @@ for instance in controller_1 controller_2 controller_3; do
         kube-api-server-config/${instance}_kube-apiserver.service \
         kube-ctrl-manager-config/kube-controller-manager.service \
         kubeconfigs/kube-admin/admin.kubeconfig \
+        kubeconfigs/kubelet/ctrl-1.kubeconfig \
+        kubeconfigs/kubelet/ctrl-2.kubeconfig \
+        kubeconfigs/kubelet/ctrl-3.kubeconfig \
+        tls/workers/ctrl-1.pem \
+        tls/workers/ctrl-1-key.pem \
+        tls/workers/ctrl-2.pem \
+        tls/workers/ctrl-2-key.pem \
+        tls/workers/ctrl-3.pem \
+        tls/workers/ctrl-3-key.pem \
+        kubeconfigs/kube-proxy/kube-proxy.kubeconfig \
         ubuntu@${instance_ip}:~/
 done
